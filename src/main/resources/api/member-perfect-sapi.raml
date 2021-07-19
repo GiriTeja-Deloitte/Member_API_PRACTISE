@@ -1,0 +1,257 @@
+#%RAML 1.0
+title: Member-Perfect-SAPI
+description: This RAML file describe structure of all member system API(SAPI).
+traits:
+  ClientHeaders: !include /exchange_modules/aa5822c3-8162-426c-9629-a5e862abf635/clientidandsecret/1.0.0/clientidandsecret.raml
+  CommonHeader: !include /exchange_modules/aa5822c3-8162-426c-9629-a5e862abf635/common-header-sapi/1.0.0/common-header-sapi.raml
+  Query_Params: !include /exchange_modules/aa5822c3-8162-426c-9629-a5e862abf635/member_queryparam_sapi/1.0.0/member_queryparam_sapi.raml
+
+types:
+  Patch_Request_DataType: !include /exchange_modules/aa5822c3-8162-426c-9629-a5e862abf635/patch_member_request_sapi/1.0.0/patch_member_request_sapi.raml
+
+  Patch_Response_DataType: !include  /exchange_modules/aa5822c3-8162-426c-9629-a5e862abf635/member_patch_response_sapi_datatype/1.0.0/member_patch_response_sapi_datatype.raml
+
+  Common-Err-response-Type: !include /exchange_modules/aa5822c3-8162-426c-9629-a5e862abf635/common_errorres_datatype/1.0.0/common_errorres_datatype.raml
+
+  Member_Get_Response_Details: !include /exchange_modules/aa5822c3-8162-426c-9629-a5e862abf635/member_getresponse_details_datatype/1.0.0/member_getresponse_details_datatype.raml
+
+/members:
+  /{memberId}:
+    patch:
+      description: Update Member Details in SF
+      is:
+        - ClientHeaders
+        - CommonHeader
+      body:
+       application/json:
+        type: Patch_Request_DataType
+        example: !include /Examples/Member_Patch_INPUT.json
+      responses:
+        200:
+          description: Success Response
+          body:
+            application/json:
+              type: Patch_Response_DataType
+              example: !include /Examples/Patch-200-res.json
+        400:
+          description: BadRequest Error
+          body:
+            application/json:
+              type: Common-Err-response-Type
+              example: !include /Examples/Error-400-response.json
+        404:
+          description: Not Found
+          body:
+            application/json:
+              type: Common-Err-response-Type
+              example: !include /Examples/Error-404-response.json
+        401:
+          description: Un-Authorized
+          body:
+            application/json:
+              type: Common-Err-response-Type
+              example: !include /Examples/Error-401-Response.json
+        500:
+          description: Internal Server Error
+          body:
+            application/json:
+              type: Common-Err-response-Type
+              example: !include /Examples/Error-500-reponse.json
+    get:
+      description: Get Member Details SAPI
+      is:
+        - ClientHeaders
+        - CommonHeader
+      responses:
+        200:
+          description: Success Response
+          body:
+            application/json:
+              description: This is success response for get member details API.
+              type: Member_Get_Response_Details
+              example: !include /Examples/Member_200_Get_Details.json
+        400:
+          description: BadRequest Error
+          body:
+            application/json:
+              type: Common-Err-response-Type
+              example: !include /Examples/Error-400-response.json
+        404:
+          description: Not Found
+          body:
+            application/json:
+              type: Common-Err-response-Type
+              example: !include /Examples/Error-404-response.json
+        401:
+          description: Un-Authorized
+          body:
+            application/json:
+              type: Common-Err-response-Type
+              example: !include /Examples/Error-401-Response.json
+        500:
+          description: Internal Server Error
+          body:
+            application/json:
+              type: Common-Err-response-Type
+              example: !include /Examples/Error-500-reponse.json
+  post:
+    description: MemberRegistration
+    is:
+      - ClientHeaders
+      - CommonHeader
+    body:
+      application/json:
+        type: Member_Get_Response_Details
+        example: !include /Examples/Member_200_Get_Details.json
+    responses:
+      200:
+        body:
+          application/json:
+            type: Patch_Response_DataType
+            example: !include /Examples/Patch-200-res.json
+      400:
+        body:
+          application/json:
+            type: Common-Err-response-Type
+            example: !include /Examples/Error-400-response.json
+      404:
+        body:
+          application/json:
+            type: Common-Err-response-Type
+            example: !include /Examples/Error-404-response.json
+      401:
+        body:
+          application/json:
+            type: Common-Err-response-Type
+            example: !include /Examples/Error-401-Response.json
+      500:
+        body:
+          application/json:
+            type: Common-Err-response-Type
+            example: !include /Examples/Error-500-reponse.json
+  get:
+    description: This API will fetch customer details
+    is:
+      - ClientHeaders
+      - CommonHeader
+      - Query_Params
+    responses:
+      200:
+        description: Success Response
+        body:
+          application/json:
+            type: object
+            properties:
+              memberList:
+                type: array
+                items:
+                  type: Member_Get_Response_Details
+                  example: !include /Examples/Member_Patch_INPUT.json
+      400:
+        body:
+          application/json:
+            description: Bad Request Error
+            type: Common-Err-response-Type
+            example: !include Examples/Error-400-response.json
+      401:
+        body:
+          application/json:
+            description: Un-Authorizzed error
+            type: Common-Err-response-Type
+            example: !include Examples/Error-401-Response.json
+      404:
+        body:
+          application/json:
+            description: Not-Found Error
+            type: Common-Err-response-Type
+            example: !include Examples/Error-404-response.json
+      500:
+        body:
+          application/json:
+            description: Internal Server Error
+            type: Common-Err-response-Type
+            example: !include Examples/Error-500-reponse.json
+  /sync:
+    post:
+      description: This API will fetch customer details from SFDC.
+      is:
+        - ClientHeaders
+        - CommonHeader
+      body:
+        application/json:
+          type: Member_Get_Response_Details
+          description: Request Input
+          example: !include /Examples/Member_Patch_INPUT.json
+      responses:
+        200:
+          body:
+            application/json:
+              description: Success response
+              type: Member_Get_Response_Details
+              example: !include /Examples/Member_200_Get_Details.json
+        400:
+          body:
+            application/json:
+              description: Bad Request
+              type: Common-Err-response-Type
+              example: !include Examples/Error-400-response.json
+        401:
+          body:
+            application/json:
+              description: Un-Authorized
+              type: Common-Err-response-Type
+              example: !include  Examples/Error-401-Response.json
+        404:
+          body:
+            application/json:
+              description: Not Found Error
+              type: Common-Err-response-Type
+              example: !include Examples/Error-404-response.json
+        500:
+          body:
+            application/json:
+              description: Internal Server Error
+              type: Common-Err-response-Type
+              example: !include Examples/Error-500-reponse.json
+                
+                
+                
+                
+      
+        
+
+            
+
+              
+              
+              
+              
+           
+                    
+                  
+              
+    
+              
+       
+              
+              
+              
+              
+          
+        
+          
+  
+ 
+  
+
+  
+  
+    
+    
+      
+        
+                
+              
+                
+
+          
